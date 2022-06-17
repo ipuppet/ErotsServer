@@ -39,7 +39,7 @@ type User struct {
 	Username       string
 	Nickname       string
 	Email          string
-	Phone          string
+	Phone          interface{}
 	Avatar         string
 	Sex            int
 	Password       string
