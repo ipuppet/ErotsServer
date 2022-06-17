@@ -258,7 +258,7 @@ func Register(nickname string, email string, password string) error {
 		return err
 	}
 
-	username := email
+	username := utils.MD5(email)
 	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 
 	result, err := database.MustExec(conn.Exec(

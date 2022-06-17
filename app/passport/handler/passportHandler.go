@@ -6,11 +6,13 @@ import (
 	"ErotsServer/app/passport/database"
 
 	"github.com/gin-gonic/gin"
+	"github.com/ipuppet/gtools/handler"
 )
 
 func LoadRouters(e *gin.Engine) {
 	e.POST("/api/register", func(c *gin.Context) {
 		type JsonParam struct {
+			Nickname string `form:"nickname" json:"nickname" binding:"required"`
 			Email    string `form:"email" json:"email" binding:"required"`
 			Password string `form:"password" json:"password" binding:"required"`
 		}
@@ -20,13 +22,7 @@ func LoadRouters(e *gin.Engine) {
 			return
 		}
 
-		registerInfo, err := database.ByPassword(jsonParam.Email, jsonParam.Password, c.ClientIP())
-		if err != nil {
-			c.AbortWithError(http.StatusBadRequest, err)
-			return
-		}
-
-		c.JSON(http.StatusOK, registerInfo)
+		handler.JsonStatus(c, database.Register(jsonParam.Nickname, jsonParam.Email, jsonParam.Password))
 	})
 
 	e.POST("/api/login/password", func(c *gin.Context) {
