@@ -48,22 +48,5 @@
                 "icon": "Permission"
             }
         ]
-    },
-    {
-        "name": "TgBot",
-        "icon": "Telegram",
-        "module": "tgBotManager",
-        "children": [
-            {
-                "name": "Webhook",
-                "url": "/tgbot/webhook/",
-                "icon": "Link"
-            },
-            {
-                "name": "消息列表",
-                "url": "/tgbot/messages/",
-                "icon": "List"
-            }
-        ]
     }
 ]
