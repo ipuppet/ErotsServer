@@ -96,7 +96,7 @@ DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
   `uid` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `phone` varchar(11),
-  `username` varchar(20) NOT NULL,
+  `username` varchar(32) NOT NULL,
   `nickname` varchar(10) NOT NULL DEFAULT 'User',
   `avatar` varchar(255) NOT NULL DEFAULT '/static/public/images/user/avatar.jpg',
   `email` varchar(30) NOT NULL DEFAULT '',
@@ -104,12 +104,12 @@ CREATE TABLE `user` (
   `options` varchar(3000) NOT NULL DEFAULT '{}',
   `password` varchar(255) NOT NULL,
   `lock` int(1) NOT NULL DEFAULT 0,
-  `registered_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `registered_date` timestamp NOT NULL DEFAULT current_timestamp(),
   `last_login_date` timestamp NOT NULL DEFAULT '2017-01-01 00:00:00',
   PRIMARY KEY (`uid`),
-  UNIQUE `index_username` (`username`),
-  UNIQUE `index_email` (`email`),
-  UNIQUE `index_phone` (`phone`)
+  UNIQUE KEY `index_username` (`username`),
+  UNIQUE KEY `index_email` (`email`),
+  UNIQUE KEY `index_phone` (`phone`)
 ) ENGINE=InnoDB AUTO_INCREMENT=100010 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
