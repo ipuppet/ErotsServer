@@ -1,0 +1,117 @@
+{
+    "column": {
+        "uid": {
+            "name": "UID",
+            "width": "80",
+            "type": "text",
+            "datatype": "int"
+        },
+        "avatar": {
+            "name": "头像",
+            "width": "60",
+            "type": "text",
+            "datatype": "string"
+        },
+        "username": {
+            "name": "用户名",
+            "width": "80",
+            "type": "text",
+            "datatype": "string"
+        },
+        "nickname": {
+            "name": "昵称",
+            "width": "80",
+            "type": "text",
+            "datatype": "string"
+        },
+        "phone": {
+            "name": "手机",
+            "width": "120",
+            "type": "text",
+            "datatype": "string"
+        },
+        "email": {
+            "name": "邮箱",
+            "width": "120",
+            "type": "text",
+            "datatype": "string"
+        },
+        "sex": {
+            "name": "性别",
+            "width": "50",
+            "type": "radio",
+            "datatype": "int",
+            "values": {
+                "1": {
+                    "name": "男"
+                },
+                "0": {
+                    "name": "女"
+                },
+                "-1": {
+                    "name": "未知"
+                }
+            }
+        },
+        "registered_date": {
+            "name": "注册日期",
+            "width": "160",
+            "type": "text",
+            "datatype": "timestamp"
+        },
+        "last_login_date": {
+            "name": "最近登陆",
+            "width": "160",
+            "type": "text",
+            "datatype": "timestamp"
+        },
+        "lock": {
+            "name": "账号状态",
+            "width": "80",
+            "type": "radio",
+            "datatype": "int",
+            "values": {
+                "1": {
+                    "name": "锁定"
+                },
+                "0": {
+                    "name": "正常"
+                }
+            }
+        }
+    },
+    "adminEdit": [
+        "lock"
+    ],
+    "canEdit": [
+        "avatar",
+        "nickname",
+        "sex"
+    ],
+    "cannotUseForSignUp": [
+        "lock",
+        "password",
+        "registered_date",
+        "last_login_date"
+    ],
+    "verification": {
+        "username": {
+            "rules": "required|min:4|max:10"
+        },
+        "email": {
+            "rules": "email"
+        },
+        "nickname": {
+            "rules": "max:10"
+        },
+        "phone": {
+            "rules": "required|digits|phone"
+        },
+        "sex": {
+            "rules": "required"
+        },
+        "password": {
+            "rules": "min:6"
+        }
+    }
+}

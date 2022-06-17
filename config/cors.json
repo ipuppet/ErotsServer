@@ -1,0 +1,23 @@
+{
+    "www": [
+        "https://admin.ultagic.com",
+        "https://blog.ultagic.com",
+        "https://passport.ultagic.com",
+        "https://start-page.ipuppet.cn",
+        "http://admin.ipuppet.test",
+        "http://blog.ipuppet.test",
+        "http://passport.ipuppet.test",
+        "http://localhost:8080"
+    ],
+    "passport": [
+        "https://admin.ultagic.com",
+        "http://admin.ipuppet.test",
+        "http://localhost:8080"
+    ],
+    "admin": [
+        "http://localhost:8080"
+    ],
+    "file": [
+        "http://localhost:8080"
+    ]
+}
