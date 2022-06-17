@@ -20,10 +20,10 @@ var (
 func main() {
 	gin.SetMode(gin.ReleaseMode)
 
-	wwwServer := www.GetServer(":8080")
-	passportServer := passport.GetServer(":8081")
-	adminServer := admin.GetServer(":8082")
-	fileServer := file.GetServer(":8083")
+	wwwServer := www.GetServer("localhost:8080")
+	passportServer := passport.GetServer("localhost:8081")
+	adminServer := admin.GetServer("localhost:8082")
+	fileServer := file.GetServer("localhost:8083")
 
 	g.Go(func() error {
 		return wwwServer.ListenAndServe()
