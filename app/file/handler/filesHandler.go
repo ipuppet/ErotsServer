@@ -17,6 +17,19 @@ var (
 	BasePath = "./storage"
 )
 
+func checkPath(path string) error {
+	// 目录不存在则创建
+	if exists, _ := utils.PathExists(path); !exists {
+		err := os.MkdirAll(path, os.ModePerm)
+		if err != nil {
+			utils.Logger("file").Println(err)
+			return err
+		}
+	}
+
+	return nil
+}
+
 func LoadRouters(e *gin.Engine) {
 	e.Use(adminHandler.Authorize())
 	e.Use(adminHandler.PermitionCheck("file"))
@@ -42,13 +55,10 @@ func LoadRouters(e *gin.Engine) {
 		path := "/image/" + uriParam.Module + "/" + time.Now().Format("2006-01-02") + "/"
 		savePath := BasePath + path
 
-		if exists, _ := utils.PathExists(savePath); !exists {
-			err := os.MkdirAll(savePath, os.ModePerm)
-			if err != nil {
-				utils.Logger("file").Println(err)
-				c.AbortWithError(http.StatusInternalServerError, err)
-				return
-			}
+		// 目录不存在则创建
+		if err := checkPath(savePath); err != nil {
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
 		}
 
 		err = c.SaveUploadedFile(file, savePath+fileName)
@@ -85,5 +95,47 @@ func LoadRouters(e *gin.Engine) {
 		}
 
 		c.String(http.StatusOK, "")
+	})
+
+	e.POST("/api/file/app/:name", func(c *gin.Context) {
+		type UriParam struct {
+			Name string `uri:"name" binding:"required"`
+		}
+		var uriParam UriParam
+		if err := c.ShouldBindUri(&uriParam); err != nil {
+			c.AbortWithError(http.StatusBadRequest, err)
+			return
+		}
+
+		file, err := c.FormFile("app")
+		if err != nil {
+			c.AbortWithError(http.StatusBadRequest, errors.New("form key should be \"app\""))
+			return
+		}
+
+		extName := file.Filename[strings.LastIndex(file.Filename, "."):]
+		fileName := utils.MD5(file.Filename) + extName
+
+		appName := uriParam.Name[:strings.LastIndex(uriParam.Name, ".")]
+
+		path := "/apps/" + appName + "/" + time.Now().Format("2006-01-02") + "/"
+		savePath := BasePath + path
+
+		// 目录不存在则创建
+		if err := checkPath(savePath); err != nil {
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
+
+		err = c.SaveUploadedFile(file, savePath+fileName)
+		if err != nil {
+			utils.Logger("file").Println(err)
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"path": path + fileName,
+		})
 	})
 }
