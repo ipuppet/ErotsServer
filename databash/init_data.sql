@@ -129,7 +129,7 @@ CREATE TABLE `rbac_user_role` (
 LOCK TABLES `rbac_user_role` WRITE;
 /*!40000 ALTER TABLE `rbac_user_role` DISABLE KEYS */;
 INSERT INTO `rbac_user_role` VALUES
-(1,100000,9,'2019-08-15 00:00:00');
+(1,100011,9,'2019-08-15 00:00:00');
 /*!40000 ALTER TABLE `rbac_user_role` ENABLE KEYS */;
 UNLOCK TABLES;
 
