@@ -23,6 +23,7 @@ build_win: clear_win
 	go build -ldflags="-s -w" -o ${BINARY_WIN}
 
 run: export GOOS=windows
+run: export GO_HOST=localhost
 run:
 	@go env -w CGO_ENABLED=$(CGO_ENABLED)
 	@go env -w GOOS=$(GOOS)

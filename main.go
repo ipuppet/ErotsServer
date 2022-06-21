@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"os"
 
 	"ErotsServer/app/admin"
 	"ErotsServer/app/file"
@@ -21,11 +22,13 @@ var (
 func main() {
 	gin.SetMode(gin.ReleaseMode)
 
-	wwwServer := www.GetServer("localhost:8080")
-	passportServer := passport.GetServer("localhost:8081")
-	adminServer := admin.GetServer("localhost:8082")
-	userServer := user.GetServer("localhost:8083")
-	fileServer := file.GetServer("localhost:8084")
+	host := os.Getenv("GO_HOST")
+
+	wwwServer := www.GetServer(host + ":8080")
+	passportServer := passport.GetServer(host + ":8081")
+	adminServer := admin.GetServer(host + ":8082")
+	userServer := user.GetServer(host + ":8083")
+	fileServer := file.GetServer(host + ":8084")
 
 	g.Go(func() error {
 		return wwwServer.ListenAndServe()
