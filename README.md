@@ -3,7 +3,7 @@
 default account:
 ```json
 {
-    "account": "admin",
+    "account": "admin@erots.com",
     "password": "admin"
 }
 ```
