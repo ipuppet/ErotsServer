@@ -8,6 +8,8 @@ import (
 	"strings"
 	"time"
 
+	"ErotsServer/app/passport/pkg"
+
 	"github.com/golang-jwt/jwt"
 	"github.com/ipuppet/gtools/config"
 	"github.com/ipuppet/gtools/database"
@@ -24,7 +26,7 @@ var (
 func init() {
 	Db = database.ConnectToMySQL("ums")
 
-	columns, _ := utils.GetStructFieldNameToSnake(User{})
+	columns, _ := utils.GetStructFieldNameToSnake(pkg.User{})
 	UserColumn = "`" + strings.Join(columns, "`,`") + "`"
 }
 
@@ -33,32 +35,6 @@ const (
 	accessTokenLife  = 24 * time.Hour
 	refreshTokenLife = 7 * 24 * time.Hour
 )
-
-type User struct {
-	Uid            int
-	Username       string
-	Nickname       string
-	Email          string
-	Phone          interface{}
-	Avatar         string
-	Sex            int
-	Password       string
-	Lock           int
-	RegisteredDate time.Time
-	LastLoginDate  time.Time
-}
-
-type AccessTokenClaims struct {
-	Uid   int
-	Roles []map[string]interface{}
-	jwt.StandardClaims
-}
-
-type RefreshTokenClaims struct {
-	Uid int
-	Ip  string
-	jwt.StandardClaims
-}
 
 func getUserInfoSQL(column string) string {
 	var sqlBuffer bytes.Buffer
@@ -71,7 +47,7 @@ func getUserInfoSQL(column string) string {
 	return sqlBuffer.String()
 }
 
-func getUserInfo(account string) (User, error) {
+func getUserInfo(account string) (pkg.User, error) {
 	var column string = "username"
 	accountByte := []byte(account)
 	if matched, _ := regexp.Match(regex.Email, accountByte); matched {
@@ -80,15 +56,15 @@ func getUserInfo(account string) (User, error) {
 		column = "phone"
 	}
 
-	user := User{}
+	user := pkg.User{}
 
 	database.SQLQueryRetrieveStruct(Db, &user, getUserInfoSQL(column), account)
 
 	return user, nil
 }
 
-func GetUserInfoByUid(uid int) User {
-	user := User{}
+func GetUserInfoByUid(uid int) pkg.User {
+	user := pkg.User{}
 
 	database.SQLQueryRetrieveStruct(Db, &user, getUserInfoSQL("uid"), uid)
 
@@ -105,9 +81,9 @@ func getUserRolesByUid(uid int) []map[string]interface{} {
 	return result
 }
 
-func generateAccessToken(user User, roles []map[string]interface{}) (string, error) {
+func generateAccessToken(user pkg.User, roles []map[string]interface{}) (string, error) {
 	expireTime := time.Now().Add(accessTokenLife)
-	jwtClaims := AccessTokenClaims{
+	jwtClaims := pkg.AccessTokenClaims{
 		Uid:   user.Uid,
 		Roles: roles,
 		StandardClaims: jwt.StandardClaims{
@@ -122,9 +98,9 @@ func generateAccessToken(user User, roles []map[string]interface{}) (string, err
 	return token.SignedString([]byte(utils.MD5(user.Password)))
 }
 
-func generateRefreshToken(user User, ip string) (string, error) {
+func generateRefreshToken(user pkg.User, ip string) (string, error) {
 	expireTime := time.Now().Add(refreshTokenLife)
-	jwtClaims := RefreshTokenClaims{
+	jwtClaims := pkg.RefreshTokenClaims{
 		Uid: user.Uid,
 		Ip:  ip,
 		StandardClaims: jwt.StandardClaims{
@@ -139,7 +115,7 @@ func generateRefreshToken(user User, ip string) (string, error) {
 	return token.SignedString([]byte(utils.MD5(user.Password)))
 }
 
-func getUserMapForToken(user User, roles []map[string]interface{}) map[string]interface{} {
+func getUserMapForToken(user pkg.User, roles []map[string]interface{}) map[string]interface{} {
 	userMap := utils.StructToMapWithLowerKey(user)
 
 	userMap["roles"] = roles
@@ -193,10 +169,10 @@ func ByPassword(account string, password string, ip string) (map[string]interfac
 }
 
 func ParseToken(accessTokenString string, refreshTokenString string, ip string) (map[string]interface{}, error) {
-	var user User
+	var user pkg.User
 	var tokenKey string
-	accessToken, err := jwt.ParseWithClaims(accessTokenString, &AccessTokenClaims{}, func(token *jwt.Token) (interface{}, error) {
-		claims := token.Claims.(*AccessTokenClaims)
+	accessToken, err := jwt.ParseWithClaims(accessTokenString, &pkg.AccessTokenClaims{}, func(token *jwt.Token) (interface{}, error) {
+		claims := token.Claims.(*pkg.AccessTokenClaims)
 		user = GetUserInfoByUid(claims.Uid)
 		tokenKey = utils.MD5(user.Password)
 		return []byte(tokenKey), nil
@@ -205,8 +181,8 @@ func ParseToken(accessTokenString string, refreshTokenString string, ip string) 
 	// accessToken 验证失败
 	if err != nil {
 		// refresh token
-		refreshToken, err := jwt.ParseWithClaims(refreshTokenString, &RefreshTokenClaims{}, func(token *jwt.Token) (interface{}, error) {
-			claims := token.Claims.(*RefreshTokenClaims)
+		refreshToken, err := jwt.ParseWithClaims(refreshTokenString, &pkg.RefreshTokenClaims{}, func(token *jwt.Token) (interface{}, error) {
+			claims := token.Claims.(*pkg.RefreshTokenClaims)
 			user = GetUserInfoByUid(claims.Uid)
 			tokenKey = utils.MD5(user.Password)
 			return []byte(tokenKey), nil
@@ -215,7 +191,7 @@ func ParseToken(accessTokenString string, refreshTokenString string, ip string) 
 			return nil, errors.New("refresh token parse failed: " + err.Error())
 		}
 
-		if claims, ok := refreshToken.Claims.(*RefreshTokenClaims); ok && refreshToken.Valid {
+		if claims, ok := refreshToken.Claims.(*pkg.RefreshTokenClaims); ok && refreshToken.Valid {
 			if claims.Ip != ip {
 				return nil, errors.New("refresh token verification failed: different ip addresse")
 			}
@@ -241,7 +217,7 @@ func ParseToken(accessTokenString string, refreshTokenString string, ip string) 
 			}, nil
 		}
 	} else {
-		if claims, ok := accessToken.Claims.(*AccessTokenClaims); ok && accessToken.Valid {
+		if claims, ok := accessToken.Claims.(*pkg.AccessTokenClaims); ok && accessToken.Valid {
 			// 使用令牌内的信息，减少查库次数
 			return map[string]interface{}{
 				"public": getUserMapForToken(user, claims.Roles),

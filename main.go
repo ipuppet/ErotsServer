@@ -6,6 +6,7 @@ import (
 	"ErotsServer/app/admin"
 	"ErotsServer/app/file"
 	"ErotsServer/app/passport"
+	"ErotsServer/app/user"
 	"ErotsServer/app/www"
 
 	"github.com/gin-gonic/gin"
@@ -23,7 +24,8 @@ func main() {
 	wwwServer := www.GetServer("localhost:8080")
 	passportServer := passport.GetServer("localhost:8081")
 	adminServer := admin.GetServer("localhost:8082")
-	fileServer := file.GetServer("localhost:8083")
+	userServer := user.GetServer("localhost:8083")
+	fileServer := file.GetServer("localhost:8084")
 
 	g.Go(func() error {
 		return wwwServer.ListenAndServe()
@@ -33,6 +35,9 @@ func main() {
 	})
 	g.Go(func() error {
 		return adminServer.ListenAndServe()
+	})
+	g.Go(func() error {
+		return userServer.ListenAndServe()
 	})
 	g.Go(func() error {
 		return fileServer.ListenAndServe()

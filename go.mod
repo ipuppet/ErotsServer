@@ -6,7 +6,7 @@ require golang.org/x/sync v0.0.0-20210220032951-036812b2e83c
 
 require (
 	github.com/goccy/go-json v0.9.7 // indirect
-	github.com/ipuppet/gtools v0.0.0-20220617144137-e21f8cc44011
+	github.com/ipuppet/gtools v0.1.2
 	github.com/pelletier/go-toml/v2 v2.0.1 // indirect
 	golang.org/x/net v0.0.0-20210226172049-e18ecbb05110 // indirect
 	golang.org/x/text v0.3.6 // indirect

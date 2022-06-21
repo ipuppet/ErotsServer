@@ -28,6 +28,10 @@ github.com/ipuppet/gtools v0.0.0-20220617112352-2435b76aab19 h1:IDKAfTgRwDsQaEFQ
 github.com/ipuppet/gtools v0.0.0-20220617112352-2435b76aab19/go.mod h1:eoNhrt7oiFYKqV3PnliunslhTwWHl3n/5TT0Ne/9F34=
 github.com/ipuppet/gtools v0.0.0-20220617144137-e21f8cc44011 h1:AVZTrEnZFxqQyqwpVQd4t9miTlsP7YAg6bAwVRUW2zo=
 github.com/ipuppet/gtools v0.0.0-20220617144137-e21f8cc44011/go.mod h1:eoNhrt7oiFYKqV3PnliunslhTwWHl3n/5TT0Ne/9F34=
+github.com/ipuppet/gtools v0.1.1 h1:Fj6sIm4QGf2EFMAqzYmefMcYvmcdhdVbJZJkYU1wOpk=
+github.com/ipuppet/gtools v0.1.1/go.mod h1:eoNhrt7oiFYKqV3PnliunslhTwWHl3n/5TT0Ne/9F34=
+github.com/ipuppet/gtools v0.1.2 h1:K1TIJEU9LFPcOSYhfdF6ucHstqNGM9/pkqFS73afc5s=
+github.com/ipuppet/gtools v0.1.2/go.mod h1:eoNhrt7oiFYKqV3PnliunslhTwWHl3n/5TT0Ne/9F34=
 github.com/json-iterator/go v1.1.12 h1:PV8peI4a0ysnczrg+LtxykD8LfKY9ML6u2jnxaEnrnM=
 github.com/json-iterator/go v1.1.12/go.mod h1:e30LSqwooZae/UwlEbR2852Gd8hjQvJoHmT4TnhNGBo=
 github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORNo=

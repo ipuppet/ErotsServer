@@ -4,23 +4,16 @@ import (
 	"net/http"
 
 	"ErotsServer/app/admin/database"
+	userPkg "ErotsServer/app/user/pkg"
 
 	"github.com/gin-gonic/gin"
-	"github.com/ipuppet/gtools/config"
 	"github.com/ipuppet/gtools/handler"
 )
 
 func LoadUserRouters(e *gin.Engine) {
 	r := e.Group("/api/user")
 
-	r.Use(PermitionCheck("rbacManager"))
-
-	r.GET("/structure", func(c *gin.Context) {
-		userStructure := map[string]interface{}{}
-		config.GetConfig("userStructure.json", &userStructure)
-
-		c.JSON(http.StatusOK, userStructure)
-	})
+	r.Use(userPkg.PermitionCheck("rbacManager"))
 
 	r.GET("/info/:page/:count", func(c *gin.Context) {
 		type UriParam struct {
@@ -46,22 +39,9 @@ func LoadUserRouters(e *gin.Engine) {
 		}
 
 		uid := int(userInfo["uid"].(float64))
-		user := database.User{Uid: uid}
+		user := database.NewUser(uid)
 
 		handler.JsonStatus(c, user.UpdateInfo(userInfo))
-	})
-
-	r.PUT("/info/self", func(c *gin.Context) {
-		userFromContext, _ := c.Get("user")
-		adminUser := userFromContext.(database.User)
-
-		userInfo := make(map[string]interface{})
-		if err := c.BindJSON(&userInfo); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{})
-			return
-		}
-
-		handler.JsonStatus(c, adminUser.UpdateInfo(userInfo))
 	})
 
 	r.GET("/user-role/:uid", func(c *gin.Context) {
@@ -74,7 +54,7 @@ func LoadUserRouters(e *gin.Engine) {
 			return
 		}
 
-		user := database.User{Uid: uriParam.Uid}
+		user := database.NewUser(uriParam.Uid)
 
 		result := user.GetRoles()
 
@@ -91,7 +71,7 @@ func LoadUserRouters(e *gin.Engine) {
 			return
 		}
 
-		user := database.User{Uid: uriParam.Uid}
+		user := database.NewUser(uriParam.Uid)
 
 		handler.JsonStatus(c, user.AddRole(*uriParam.RoleId))
 	})
@@ -106,7 +86,7 @@ func LoadUserRouters(e *gin.Engine) {
 			return
 		}
 
-		user := database.User{Uid: uriParam.Uid}
+		user := database.NewUser(uriParam.Uid)
 
 		handler.JsonStatus(c, user.DeleteRole(*uriParam.RoleId))
 	})

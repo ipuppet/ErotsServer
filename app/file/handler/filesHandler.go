@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	adminHandler "ErotsServer/app/admin/handler"
+	userPkg "ErotsServer/app/user/pkg"
 
 	"github.com/gin-gonic/gin"
 	"github.com/ipuppet/gtools/utils"
@@ -31,8 +31,8 @@ func checkPath(path string) error {
 }
 
 func LoadRouters(e *gin.Engine) {
-	e.Use(adminHandler.Authorize())
-	e.Use(adminHandler.PermitionCheck("file"))
+	e.Use(userPkg.Authorize())
+	e.Use(userPkg.PermitionCheck("file"))
 
 	e.POST("/api/file/image/:module", func(c *gin.Context) {
 		type UriParam struct {

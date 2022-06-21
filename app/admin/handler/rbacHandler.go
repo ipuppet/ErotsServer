@@ -5,6 +5,7 @@ import (
 
 	"ErotsServer/app/admin/database"
 	"ErotsServer/app/admin/structure"
+	userPkg "ErotsServer/app/user/pkg"
 
 	"github.com/gin-gonic/gin"
 	"github.com/ipuppet/gtools/handler"
@@ -13,7 +14,7 @@ import (
 func LoadRBACRouters(e *gin.Engine) {
 	r := e.Group("/api/rbac")
 
-	r.Use(PermitionCheck("rbacManager"))
+	r.Use(userPkg.PermitionCheck("rbacManager"))
 
 	r.GET("/roles", func(c *gin.Context) {
 		roles, err := database.GetRoles()
