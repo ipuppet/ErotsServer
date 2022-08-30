@@ -1,4 +1,4 @@
-package pkg
+package dao
 
 import (
 	"database/sql"
@@ -15,5 +15,5 @@ var (
 
 func init() {
 	Db = database.ConnectToMySQL("")
-	Logger = utils.Logger("user")
+	Logger = utils.Logger("file")
 }

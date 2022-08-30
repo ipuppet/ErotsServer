@@ -3,7 +3,8 @@ package handler
 import (
 	"net/http"
 
-	"ErotsServer/app/user/pkg"
+	"ErotsServer/app/user/dao"
+	"ErotsServer/app/user/logic"
 
 	"github.com/gin-gonic/gin"
 	"github.com/ipuppet/gtools/config"
@@ -22,7 +23,7 @@ func LoadUserRouters(e *gin.Engine) {
 
 	r.PUT("/info/self", func(c *gin.Context) {
 		userFromContext, _ := c.Get("User")
-		adminUser := userFromContext.(*pkg.User)
+		user := userFromContext.(*dao.User)
 
 		userInfo := make(map[string]interface{})
 		if err := c.BindJSON(&userInfo); err != nil {
@@ -30,6 +31,6 @@ func LoadUserRouters(e *gin.Engine) {
 			return
 		}
 
-		handler.JsonStatus(c, adminUser.UpdateInfo(userInfo))
+		handler.JsonStatus(c, logic.UpdateInfo(user, userInfo))
 	})
 }

@@ -1,13 +1,13 @@
 package handler
 
 import (
-	"ErotsServer/app/user/pkg"
+	"ErotsServer/app/user/middleware"
 
 	"github.com/gin-gonic/gin"
 )
 
 func LoadRouters(e *gin.Engine) {
-	e.Use(pkg.Authorize())
+	e.Use(middleware.Authorize())
 
 	// load modules
 	LoadMenuRouters(e)

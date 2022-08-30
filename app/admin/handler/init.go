@@ -1,28 +1,27 @@
 package handler
 
 import (
-	"ErotsServer/app/admin/internal"
-	userPkg "ErotsServer/app/user/pkg"
+	"net/http"
+
+	"ErotsServer/app/admin/middleware"
+	userMiddleware "ErotsServer/app/user/middleware"
 
 	"github.com/gin-gonic/gin"
+	"github.com/ipuppet/gtools/database"
 )
 
-func SetAdminUser() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		user, _ := c.Get("User")
-		adminUser := &internal.User{
-			User: user.(*userPkg.User),
-		}
-		c.Set("AdminUser", adminUser)
-		c.Next()
-	}
-}
-
 func LoadRouters(e *gin.Engine) {
-	e.Use(userPkg.Authorize())
-	e.Use(SetAdminUser())
+	e.Use(userMiddleware.Authorize())
+	e.Use(middleware.SetAdminUser())
 
 	// load modules
 	LoadRBACRouters(e)
 	LoadUserRouters(e)
+
+	e.DELETE("/api/cache", func(c *gin.Context) {
+		// TODO /api/cache
+		database.CleanCache()
+
+		c.JSON(http.StatusOK, "")
+	})
 }

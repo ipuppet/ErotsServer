@@ -3,7 +3,7 @@ package handler
 import (
 	"net/http"
 
-	"ErotsServer/app/user/pkg"
+	"ErotsServer/app/user/dao"
 
 	"github.com/gin-gonic/gin"
 	"github.com/ipuppet/gtools/config"
@@ -12,8 +12,8 @@ import (
 func LoadMenuRouters(e *gin.Engine) {
 	e.GET("/api/menu", func(c *gin.Context) {
 		userFromContext, _ := c.Get("User")
-		user := userFromContext.(*pkg.User)
-		permittedModules := user.GetPermittedModules()
+		user := userFromContext.(*dao.User)
+		permittedModules, _ := user.GetPermittedModules()
 
 		menus := []map[string]interface{}{}
 		config.GetConfig("menu.json", &menus)

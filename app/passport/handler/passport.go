@@ -3,28 +3,12 @@ package handler
 import (
 	"net/http"
 
-	"ErotsServer/app/passport/database"
+	"ErotsServer/app/passport/logic"
 
 	"github.com/gin-gonic/gin"
-	"github.com/ipuppet/gtools/handler"
 )
 
 func LoadRouters(e *gin.Engine) {
-	e.POST("/api/register", func(c *gin.Context) {
-		type JsonParam struct {
-			Nickname string `form:"nickname" json:"nickname" binding:"required"`
-			Email    string `form:"email" json:"email" binding:"required"`
-			Password string `form:"password" json:"password" binding:"required"`
-		}
-		var jsonParam JsonParam
-		if err := c.ShouldBind(&jsonParam); err != nil {
-			c.AbortWithError(http.StatusBadRequest, err)
-			return
-		}
-
-		handler.JsonStatus(c, database.Register(jsonParam.Nickname, jsonParam.Email, jsonParam.Password))
-	})
-
 	e.POST("/api/login/password", func(c *gin.Context) {
 		type JsonParam struct {
 			Account  string `form:"account" json:"account" binding:"required"`
@@ -36,7 +20,7 @@ func LoadRouters(e *gin.Engine) {
 			return
 		}
 
-		loginInfo, err := database.ByPassword(jsonParam.Account, jsonParam.Password, c.ClientIP())
+		loginInfo, err := logic.ByPassword(jsonParam.Account, jsonParam.Password, c.ClientIP())
 		if err != nil {
 			c.AbortWithError(http.StatusBadRequest, err)
 			return
@@ -56,7 +40,7 @@ func LoadRouters(e *gin.Engine) {
 			return
 		}
 
-		tokenClaims, err := database.ParseToken(jsonParam.AccessToken, jsonParam.RefreshToken, c.ClientIP())
+		tokenClaims, err := logic.ParseToken(jsonParam.AccessToken, jsonParam.RefreshToken, c.ClientIP())
 		if err != nil {
 			c.AbortWithError(http.StatusBadRequest, err)
 			return

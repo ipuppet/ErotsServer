@@ -3,9 +3,9 @@ package handler
 import (
 	"net/http"
 
-	"ErotsServer/app/admin/database"
-	"ErotsServer/app/admin/structure"
-	userPkg "ErotsServer/app/user/pkg"
+	"ErotsServer/app/admin/dao"
+	userDao "ErotsServer/app/user/dao"
+	userMiddleware "ErotsServer/app/user/middleware"
 
 	"github.com/gin-gonic/gin"
 	"github.com/ipuppet/gtools/handler"
@@ -14,10 +14,10 @@ import (
 func LoadRBACRouters(e *gin.Engine) {
 	r := e.Group("/api/rbac")
 
-	r.Use(userPkg.PermitionCheck("rbacManager"))
+	r.Use(userMiddleware.PermitionCheck("rbacManager"))
 
 	r.GET("/roles", func(c *gin.Context) {
-		roles, err := database.GetRoles()
+		roles, err := dao.GetRoles()
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{})
 			return
@@ -27,26 +27,26 @@ func LoadRBACRouters(e *gin.Engine) {
 	})
 
 	r.PUT("/role", func(c *gin.Context) {
-		var role structure.Role
+		var role userDao.Role
 		if err := c.Bind(&role); err != nil {
 			c.AbortWithError(http.StatusBadRequest, err)
 			return
 		}
 
-		handler.JsonStatus(c, database.UpdateRole(role))
+		handler.JsonStatus(c, dao.UpdateRole(role))
 	})
 	r.POST("/role", func(c *gin.Context) {
-		var role structure.Role
+		var role userDao.Role
 		if err := c.Bind(&role); err != nil {
 			c.AbortWithError(http.StatusBadRequest, err)
 			return
 		}
 
-		handler.JsonStatus(c, database.AddRole(role))
+		handler.JsonStatus(c, dao.AddRole(role))
 	})
 	r.DELETE("/role/:role_id", func(c *gin.Context) {
 		type UriParam struct {
-			RoleId *int `uri:"role_id" binding:"required"`
+			RoleId int `uri:"role_id" binding:"number"`
 		}
 		var uriParam UriParam
 		if err := c.ShouldBindUri(&uriParam); err != nil {
@@ -54,11 +54,11 @@ func LoadRBACRouters(e *gin.Engine) {
 			return
 		}
 
-		handler.JsonStatus(c, database.DeleteRole(*uriParam.RoleId))
+		handler.JsonStatus(c, dao.DeleteRole(uriParam.RoleId))
 	})
 
 	r.GET("/permissions", func(c *gin.Context) {
-		permissions, err := database.GetPermissions()
+		permissions, err := dao.GetPermissions()
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{})
 			return
@@ -68,26 +68,26 @@ func LoadRBACRouters(e *gin.Engine) {
 	})
 
 	r.PUT("/permission", func(c *gin.Context) {
-		var permission structure.Permission
+		var permission userDao.Permission
 		if err := c.Bind(&permission); err != nil {
 			c.AbortWithError(http.StatusBadRequest, err)
 			return
 		}
 
-		handler.JsonStatus(c, database.UpdatePermission(permission))
+		handler.JsonStatus(c, dao.UpdatePermission(permission))
 	})
 	r.POST("/permission", func(c *gin.Context) {
-		var permission structure.Permission
+		var permission userDao.Permission
 		if err := c.Bind(&permission); err != nil {
 			c.AbortWithError(http.StatusBadRequest, err)
 			return
 		}
 
-		handler.JsonStatus(c, database.AddPermission(permission))
+		handler.JsonStatus(c, dao.AddPermission(permission))
 	})
 	r.DELETE("/permission/:permission_id", func(c *gin.Context) {
 		type UriParam struct {
-			PermissionId *int `uri:"permission_id" binding:"required"`
+			PermissionId int `uri:"permission_id" binding:"number"`
 		}
 		var uriParam UriParam
 		if err := c.ShouldBindUri(&uriParam); err != nil {
@@ -95,12 +95,12 @@ func LoadRBACRouters(e *gin.Engine) {
 			return
 		}
 
-		handler.JsonStatus(c, database.DeletePermission(*uriParam.PermissionId))
+		handler.JsonStatus(c, dao.DeletePermission(uriParam.PermissionId))
 	})
 
 	r.GET("/role/:role_id/permissions", func(c *gin.Context) {
 		type UriParam struct {
-			RoleId *int `uri:"role_id" binding:"required"`
+			RoleId int `uri:"role_id" binding:"number"`
 		}
 		var uriParam UriParam
 		if err := c.ShouldBindUri(&uriParam); err != nil {
@@ -108,7 +108,7 @@ func LoadRBACRouters(e *gin.Engine) {
 			return
 		}
 
-		result, err := database.GetRolePermissions(*uriParam.RoleId)
+		result, err := dao.GetRolePermissions(uriParam.RoleId)
 		if err != nil {
 			c.AbortWithError(http.StatusInternalServerError, err)
 			return
@@ -118,8 +118,8 @@ func LoadRBACRouters(e *gin.Engine) {
 	})
 	r.DELETE("/role/:role_id/permission/:permission_id", func(c *gin.Context) {
 		type UriParam struct {
-			RoleId       *int `uri:"role_id" binding:"required"`
-			PermissionId *int `uri:"permission_id" binding:"required"`
+			RoleId       int `uri:"role_id" binding:"number"`
+			PermissionId int `uri:"permission_id" binding:"number"`
 		}
 		var uriParam UriParam
 		if err := c.ShouldBindUri(&uriParam); err != nil {
@@ -127,12 +127,12 @@ func LoadRBACRouters(e *gin.Engine) {
 			return
 		}
 
-		handler.JsonStatus(c, database.DeleteRolePermission(*uriParam.RoleId, *uriParam.PermissionId))
+		handler.JsonStatus(c, dao.DeleteRolePermission(uriParam.RoleId, uriParam.PermissionId))
 	})
 	r.POST("/role/:role_id/permission/:permission_id", func(c *gin.Context) {
 		type UriParam struct {
-			RoleId       *int `uri:"role_id" binding:"required"`
-			PermissionId *int `uri:"permission_id" binding:"required"`
+			RoleId       int `uri:"role_id" binding:"number"`
+			PermissionId int `uri:"permission_id" binding:"number"`
 		}
 		var uriParam UriParam
 		if err := c.ShouldBindUri(&uriParam); err != nil {
@@ -140,6 +140,6 @@ func LoadRBACRouters(e *gin.Engine) {
 			return
 		}
 
-		handler.JsonStatus(c, database.AddRolePermission(*uriParam.RoleId, *uriParam.PermissionId))
+		handler.JsonStatus(c, dao.AddRolePermission(uriParam.RoleId, uriParam.PermissionId))
 	})
 }

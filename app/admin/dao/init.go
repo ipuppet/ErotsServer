@@ -1,11 +1,10 @@
-package database
+package dao
 
 import (
 	"database/sql"
 	"log"
 
-	userPkg "ErotsServer/app/user/pkg"
-
+	"github.com/ipuppet/gtools/database"
 	"github.com/ipuppet/gtools/utils"
 )
 
@@ -15,6 +14,6 @@ var (
 )
 
 func init() {
-	Db = userPkg.Db
+	Db = database.ConnectToMySQL("")
 	Logger = utils.Logger("admin")
 }
