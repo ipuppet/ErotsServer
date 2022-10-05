@@ -6,6 +6,12 @@ import (
 	userLogic "ErotsServer/app/user/logic"
 )
 
+var (
+	AdminEdit = append(userLogic.UserEdit, []string{
+		"lock",
+	}...)
+)
+
 func NewUser(uid int) *dao.User {
 	user := &dao.User{
 		User: &userDao.User{},
@@ -38,7 +44,7 @@ func SearchUser(count int, kw string) []map[string]interface{} {
 
 func UpdateUserInfo(uid int, info map[string]interface{}) error {
 	user := NewUser(uid)
-	return user.UpdateInfo(info, userLogic.AdminEdit)
+	return user.UpdateInfo(info, AdminEdit)
 }
 
 func GetUserRoles(uid int) ([]userDao.Role, error) {
