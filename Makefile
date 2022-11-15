@@ -1,4 +1,4 @@
-.PHONY: default build build_win run gotool clean clear_win help
+.PHONY: default build build_win run gotool clean clean_win help
 
 BINARY="go-server"
 BINARY_WIN="go-server.exe"
@@ -9,14 +9,14 @@ export CGO_ENABLED=0
 export GOARCH=amd64
 
 build: export GOOS=linux
-build: clear_win
+build: clean_win
 	@go env -w CGO_ENABLED=$(CGO_ENABLED)
 	@go env -w GOOS=$(GOOS)
 	@go env -w GOARCH=$(GOARCH)
 	go build -ldflags="-s -w" -o ${BINARY}
 
 build_win: export GOOS=windows
-build_win: clear_win
+build_win: clean_win
 	@go env -w CGO_ENABLED=$(CGO_ENABLED)
 	@go env -w GOOS=$(GOOS)
 	@go env -w GOARCH=$(GOARCH)
@@ -37,7 +37,7 @@ gotool:
 clean:
 	@if [ -f ${BINARY} ] ; then rm ${BINARY} ; fi
 
-clear_win:
+clean_win:
 	@del ${BINARY}; del ${BINARY_WIN}
 
 help:
